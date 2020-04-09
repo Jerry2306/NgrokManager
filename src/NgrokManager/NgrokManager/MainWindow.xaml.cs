@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NgrokManager.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,9 +21,49 @@ namespace NgrokManager
     /// </summary>
     public partial class MainWindow : Window
     {
+        private MainWindowViewModel vm;
         public MainWindow()
         {
             InitializeComponent();
+            try
+            {
+                vm = new MainWindowViewModel();
+            }
+            catch (Exception exc)
+            {
+                MessageBox.Show($"Fehler beim ViewModel erstellen: {exc.Message}");
+            }
+            DataContext = vm;
+        }
+
+        private void BtnRefresh_Click(object sender, RoutedEventArgs e)
+        {
+            if (MessageBox.Show("Willst du wirklich den Link erneuern?", "Achtung", MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.Yes)
+                vm.RefreshAddress();
+        }
+
+        private void BtnMain_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                vm.StartStop();
+            }
+            catch (Exception exc)
+            {
+                MessageBox.Show($"Fehler beim {vm.MainButtonContent}: {exc.Message}");
+            }
+        }
+
+        private void BtnRunBatch_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                vm.StartAPI();
+            }
+            catch (Exception exc)
+            {
+                MessageBox.Show($"Konnte Batch nicht ausführen: {exc.Message}");
+            }
         }
     }
 }
