@@ -19,6 +19,7 @@ namespace NgrokManager.ViewModel
         public string LabelProgress { get; set; }
 
         private string _ngrokBatchPath = string.Empty;
+        private string _csFilePath = string.Empty;
 
         private TunnelEntity _tunnel = null;
         private NgrokTableHelper _helper;
@@ -29,7 +30,15 @@ namespace NgrokManager.ViewModel
             MainButtonContent = "Start";
             LabelProgress = "...";
 
-            _helper = new NgrokTableHelper(File.ReadAllText("cs.txt"));
+            _csFilePath = ConfigurationManager.AppSettings["ConnectionStringFilePath"];
+            try
+            {
+                _helper = new NgrokTableHelper(File.ReadAllText(_csFilePath));
+            }
+            catch (Exception exc)
+            {
+                throw new Exception($"ConnectionString Datei konnte nicht gelesen werden! Datei: '{_csFilePath}'", exc);
+            }
 
             _manager = new NgrokServerManager();
             _ngrokBatchPath = ConfigurationManager.AppSettings["HostNgrokBatchPath"];
