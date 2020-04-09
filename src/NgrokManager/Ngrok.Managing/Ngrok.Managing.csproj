@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\Const.cs" />
     <Compile Include="Forwarding\NgrokManager.cs" />
     <Compile Include="Model\TunnelEntity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

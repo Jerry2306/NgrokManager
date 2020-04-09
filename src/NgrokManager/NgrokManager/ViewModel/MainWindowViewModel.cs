@@ -1,4 +1,5 @@
-﻿using Ngrok.Managing.Forwarding;
+﻿using Ngrok.Managing.Data;
+using Ngrok.Managing.Forwarding;
 using Ngrok.Managing.Model;
 using NgrokManager.Helper;
 using System;
@@ -41,29 +42,32 @@ namespace NgrokManager.ViewModel
         {
             if (MainButtonContent.ToLower() == "start")
             {
-                _tunnel = _manager.StartTunneling("mc_server_forward", "tcp", "25565");
-                _helper.SetMcForwardAddress(_tunnel.public_url);
+                _tunnel = _manager.StartTunneling(Const.McServerForward, "tcp", "25565");
                 MainButtonContent = "Stop";
-                MessageBox.Show("Tunnel geöffnet!");
+                MessageBox.Show("Tunnel geöffnet! Datenbankeintrag wird angepasst...");
+                _helper.SetMcForwardAddress(_tunnel.public_url);
+                MessageBox.Show("In Datenbank aktualisiert!");
             }
             else if (MainButtonContent.ToLower() == "stop")
             {
-                _manager.StopTunneling("mc_server_forward");
-                _helper.SetMcForwardAddress(string.Empty);
+                _manager.StopTunneling(Const.McServerForward);
                 _tunnel = null;
                 MainButtonContent = "Start";
-                MessageBox.Show("Tunnel geschlossen!");
+                MessageBox.Show("Tunnel geschlossen! Datenbankeintrag wird angepasst...");
+                _helper.SetMcForwardAddress(string.Empty);
+                MessageBox.Show("In Datenbank aktualisiert!");
             }
         }
 
         public void RefreshAddress()
         {
             if (_tunnel != null)
-                _manager.StopTunneling("mc_server_forward");
+                _manager.StopTunneling(Const.McServerForward);
 
-            _tunnel = _manager.StartTunneling("mc_server_forward", "tcp", "25565");
+            _tunnel = _manager.StartTunneling(Const.McServerForward, "tcp", "25565");
+            MessageBox.Show("Adresse erneuert! Datenbankeintrag wird angepasst...");
             _helper.SetMcForwardAddress(_tunnel.public_url);
-            MessageBox.Show("Adresse erneuert!");
+            MessageBox.Show("In Datenbank aktualisiert!");
         }
     }
 }
