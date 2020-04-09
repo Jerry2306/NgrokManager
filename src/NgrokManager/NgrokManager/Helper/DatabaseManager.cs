@@ -1,6 +1,7 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
@@ -18,8 +19,17 @@ namespace NgrokManager.Helper
         private MySqlDataReader _dataReader { get; set; }
         public DatabaseManager(string connectionString)
         {
-            _sqlCon = new MySqlConnection(connectionString);
             IsOpen = false;
+            _sqlCon = new MySqlConnection(connectionString);
+            _sqlCon.StateChange += _sqlCon_StateChange;
+        }
+
+        private void _sqlCon_StateChange(object sender, StateChangeEventArgs e)
+        {
+            if (e.CurrentState == ConnectionState.Closed)
+                IsOpen = false;
+            else if (e.CurrentState == ConnectionState.Open)
+                IsOpen = true;
         }
 
         public void Open()
