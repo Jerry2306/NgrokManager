@@ -34,6 +34,7 @@ namespace Ngrok.Managing.Forwarding
             if (_process != null)
                 if (!ContinueAlreadyExistingProcess())
                     return;
+
             //TODO: Check if already hosting and alert
             //TODO: Implement NgrokBackgroundWorker/Checker
             _process = Process.Start(new ProcessStartInfo(fileName) { WindowStyle = ProcessWindowStyle.Minimized });

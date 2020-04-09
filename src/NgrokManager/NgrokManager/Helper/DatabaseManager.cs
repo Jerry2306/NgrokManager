@@ -10,28 +10,41 @@ namespace NgrokManager.Helper
 {
     public class DatabaseManager : IDisposable
     {
+        public bool IsOpen { get; private set; }
+        public bool IsClosed { get => !IsOpen; }
+
         private MySqlConnection _sqlCon { get; set; }
         private MySqlCommand _command { get; set; }
         private MySqlDataReader _dataReader { get; set; }
         public DatabaseManager(string connectionString)
         {
             _sqlCon = new MySqlConnection(connectionString);
-            Open();
+            IsOpen = false;
         }
 
-        public DatabaseManager()
-        {
-        }
-
-        private void Open()
+        public void Open()
         {
             try
             {
                 _sqlCon.Open();
+                IsOpen = true;
             }
             catch (Exception exc)
             {
                 throw new Exception($"Datenbankverbindung konnte nicht geöffnet werden: {exc.Message}", exc);
+            }
+        }
+
+        public void Close()
+        {
+            try
+            {
+                _sqlCon.Close();
+                IsOpen = false;
+            }
+            catch (Exception exc)
+            {
+                throw new Exception($"Datenbankverbindung konnte nicht geschlossen werden: {exc.Message}", exc);
             }
         }
 
@@ -44,6 +57,9 @@ namespace NgrokManager.Helper
 
             try
             {
+                if (IsClosed)
+                    Open();
+
                 _command = new MySqlCommand(sql, _sqlCon);
 
                 _dataReader = _command.ExecuteReader();
@@ -76,6 +92,9 @@ namespace NgrokManager.Helper
             int result = -1;
             try
             {
+                if (IsClosed)
+                    Open();
+
                 _command = new MySqlCommand(sql, _sqlCon);
 
                 result = _command.ExecuteNonQuery();

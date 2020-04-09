@@ -4,6 +4,7 @@ using NgrokManager.Helper;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -27,7 +28,7 @@ namespace NgrokManager.ViewModel
             MainButtonContent = "Start";
             LabelProgress = "...";
 
-            _helper = new NgrokTableHelper("Data Source=den1.mysql1.gear.host;Initial Catalog=serverconfig;User ID=serverconfig;Password=Rf0o!p!4hhgz");
+            _helper = new NgrokTableHelper(File.ReadAllText("cs.txt"));
 
             _manager = new NgrokServerManager();
             _ngrokBatchPath = ConfigurationManager.AppSettings["HostNgrokBatchPath"];
