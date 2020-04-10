@@ -11,25 +11,14 @@ namespace NgrokManager.Helper
 {
     public class DatabaseManager : IDisposable
     {
-        public bool IsOpen { get; private set; }
-        public bool IsClosed { get => !IsOpen; }
+        public ConnectionState State { get => _sqlCon.State; }
 
         private MySqlConnection _sqlCon { get; set; }
         private MySqlCommand _command { get; set; }
         private MySqlDataReader _dataReader { get; set; }
         public DatabaseManager(string connectionString)
         {
-            IsOpen = false;
             _sqlCon = new MySqlConnection(connectionString);
-            _sqlCon.StateChange += _sqlCon_StateChange;
-        }
-
-        private void _sqlCon_StateChange(object sender, StateChangeEventArgs e)
-        {
-            if (e.CurrentState == ConnectionState.Closed)
-                IsOpen = false;
-            else if (e.CurrentState == ConnectionState.Open)
-                IsOpen = true;
         }
 
         public void Open()
@@ -37,7 +26,6 @@ namespace NgrokManager.Helper
             try
             {
                 _sqlCon.Open();
-                IsOpen = true;
             }
             catch (Exception exc)
             {
@@ -50,7 +38,6 @@ namespace NgrokManager.Helper
             try
             {
                 _sqlCon.Close();
-                IsOpen = false;
             }
             catch (Exception exc)
             {
@@ -67,7 +54,7 @@ namespace NgrokManager.Helper
 
             try
             {
-                if (IsClosed)
+                if (State == ConnectionState.Closed)
                     Open();
 
                 _command = new MySqlCommand(sql, _sqlCon);
@@ -102,7 +89,7 @@ namespace NgrokManager.Helper
             int result = -1;
             try
             {
-                if (IsClosed)
+                if (State == ConnectionState.Closed)
                     Open();
 
                 _command = new MySqlCommand(sql, _sqlCon);

@@ -47,6 +47,8 @@ namespace NgrokManager.ViewModel
 
         public void StartAPI() => _manager.StartAPI(_ngrokBatchPath);
 
+        public void StopAPI() => _manager.StopAPI();
+
         public void StartStop()
         {
             if (MainButtonContent.ToLower() == "start")
@@ -75,6 +77,7 @@ namespace NgrokManager.ViewModel
 
             _tunnel = _manager.StartTunneling(Const.McServerForward, "tcp", "25565");
             MessageBox.Show("Adresse erneuert! Datenbankeintrag wird angepasst...");
+            
             _helper.SetMcForwardAddress(_tunnel.public_url);
             MessageBox.Show("In Datenbank aktualisiert!");
         }

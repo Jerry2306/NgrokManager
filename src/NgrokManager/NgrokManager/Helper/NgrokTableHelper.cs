@@ -17,7 +17,9 @@ namespace NgrokManager.Helper
 
         public void SetMcForwardAddress(string address)
         {
+            _manager.Open();
             int i = _manager.RunNonQuery($"UPDATE ngrok SET ConnectionAddress = '{address}', ConnectionDate = '{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}' WHERE ConnectionName = '{Const.McServerForward}'");
+            _manager.Close();
             if (i <= 0)
                 throw new Exception($"Es wurde keine Zeile aktualisiert (Beim Setzen der ConnectionAddress). Fehlt evtl. der '{Const.McServerForward}' Eintrag?");
         }

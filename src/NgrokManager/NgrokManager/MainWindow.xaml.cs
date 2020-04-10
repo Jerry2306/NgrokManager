@@ -46,7 +46,8 @@ namespace NgrokManager
         {
             try
             {
-                vm.StartStop();
+                if (vm.MainButtonContent.ToLower() == "stop" && MessageBox.Show("Willst du wirklich stoppen?", "Achtung", MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.Yes)
+                    vm.StartStop();
             }
             catch (Exception exc)
             {
@@ -63,6 +64,18 @@ namespace NgrokManager
             catch (Exception exc)
             {
                 MessageBox.Show($"Konnte Batch nicht ausführen: {exc.Message}");
+            }
+        }
+
+        private void BtnStopProcess_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                vm.StopAPI();
+            }
+            catch (Exception exc)
+            {
+                MessageBox.Show($"Konnte API nicht stoppen: {exc.Message}");
             }
         }
     }
