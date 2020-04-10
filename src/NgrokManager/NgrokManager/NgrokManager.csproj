@@ -84,8 +84,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Helper\DatabaseManager.cs" />
-    <Compile Include="Helper\NgrokTableHelper.cs" />
     <Compile Include="ViewModel\BasePropertyChanged.cs" />
     <Compile Include="ViewModel\MainWindowViewModel.cs" />
     <Page Include="MainWindow.xaml">

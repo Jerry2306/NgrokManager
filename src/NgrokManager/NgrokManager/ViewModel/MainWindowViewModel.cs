@@ -1,9 +1,10 @@
 ﻿using Ngrok.Managing.Data;
+using Ngrok.Managing.Db;
 using Ngrok.Managing.Forwarding;
 using Ngrok.Managing.Model;
-using NgrokManager.Helper;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Configuration;
 using System.IO;
 using System.Linq;
@@ -18,11 +19,13 @@ namespace NgrokManager.ViewModel
         public string MainButtonContent { get; set; }
         public string LabelProgress { get; set; }
 
+        public ObservableCollection<string> BackgroundWorkerLog { get; set; }
+
         private string _ngrokBatchPath = string.Empty;
         private string _csFilePath = string.Empty;
 
         private TunnelEntity _tunnel = null;
-        private NgrokTableHelper _helper;
+        private INgrokTableHelper _helper;
         private NgrokServerManager _manager;
 
         public MainWindowViewModel()
@@ -30,10 +33,13 @@ namespace NgrokManager.ViewModel
             MainButtonContent = "Start";
             LabelProgress = "...";
 
+
+            BackgroundWorkerLog = new ObservableCollection<string>();
+
             _csFilePath = ConfigurationManager.AppSettings["ConnectionStringFilePath"];
             try
             {
-                _helper = new NgrokTableHelper(File.ReadAllText(_csFilePath));
+                _helper = new MySqlNgrokTableHelper(File.ReadAllText(_csFilePath));
             }
             catch (Exception exc)
             {
@@ -56,7 +62,7 @@ namespace NgrokManager.ViewModel
                 _tunnel = _manager.StartTunneling(Const.McServerForward, "tcp", "25565");
                 MainButtonContent = "Stop";
                 MessageBox.Show("Tunnel geöffnet! Datenbankeintrag wird angepasst...");
-                _helper.SetMcForwardAddress(_tunnel.public_url);
+                _helper.SetForwardAddress(Const.McServerForward, _tunnel.public_url);
                 MessageBox.Show("In Datenbank aktualisiert!");
             }
             else if (MainButtonContent.ToLower() == "stop")
@@ -65,7 +71,7 @@ namespace NgrokManager.ViewModel
                 _tunnel = null;
                 MainButtonContent = "Start";
                 MessageBox.Show("Tunnel geschlossen! Datenbankeintrag wird angepasst...");
-                _helper.SetMcForwardAddress(string.Empty);
+                _helper.SetForwardAddress(Const.McServerForward, string.Empty);
                 MessageBox.Show("In Datenbank aktualisiert!");
             }
         }
@@ -77,8 +83,8 @@ namespace NgrokManager.ViewModel
 
             _tunnel = _manager.StartTunneling(Const.McServerForward, "tcp", "25565");
             MessageBox.Show("Adresse erneuert! Datenbankeintrag wird angepasst...");
-            
-            _helper.SetMcForwardAddress(_tunnel.public_url);
+
+            _helper.SetForwardAddress(Const.McServerForward, _tunnel.public_url);
             MessageBox.Show("In Datenbank aktualisiert!");
         }
     }

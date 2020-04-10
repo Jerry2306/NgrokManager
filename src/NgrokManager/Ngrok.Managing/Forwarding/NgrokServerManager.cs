@@ -43,8 +43,8 @@ namespace Ngrok.Managing.Forwarding
             _process.BeginOutputReadLine();
 
             _process.ErrorDataReceived += _process_ErrorDataReceived;
-            */
-            _process.Exited += _process_Exited;
+            
+            _process.Exited += _process_Exited;*/
         }
 
         public void StopAPI()
@@ -108,6 +108,21 @@ namespace Ngrok.Managing.Forwarding
                 result = streamReader.ReadToEnd();
             }
             return result;
+        }
+
+        public TunnelListEntity GetTunnels()
+        {
+            _request = (HttpWebRequest)WebRequest.Create($"http://localhost:4040/api/tunnels");
+            _request.Method = "GET";
+            _request.ContentType = "application/json";
+
+            string result;
+            using (var streamReader = new StreamReader(((HttpWebResponse)_request.GetResponse()).GetResponseStream()))
+            {
+                result = streamReader.ReadToEnd();
+            }
+
+            return JsonConvert.DeserializeObject<TunnelListEntity>(result);
         }
 
         private bool ContinueAlreadyExistingProcess()
