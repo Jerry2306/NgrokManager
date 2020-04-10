@@ -51,7 +51,7 @@ namespace Ngrok.Managing.Forwarding
         {
             if (_process == null)
                 throw new Exception("Process is null. Shut down process manually.");
-
+            //TODO: find process ngrok.exe and cancel all found processes
             _process.Close();
             _process.Dispose();
             _process = null;

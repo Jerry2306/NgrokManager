@@ -48,6 +48,8 @@ namespace NgrokManager
             {
                 if (vm.MainButtonContent.ToLower() == "stop" && MessageBox.Show("Willst du wirklich stoppen?", "Achtung", MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.Yes)
                     vm.StartStop();
+                else
+                    vm.StartStop();
             }
             catch (Exception exc)
             {
