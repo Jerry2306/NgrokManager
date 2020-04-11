@@ -9,6 +9,7 @@ namespace Ngrok.Managing.Forwarding
     public interface INgrokBackgroundWorker
     {
         int Interval { get; set; }
+
         event LogEventHandler LogReceived;
 
         void Start();

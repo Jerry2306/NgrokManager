@@ -1,4 +1,5 @@
 ﻿using Ngrok.Managing.Db;
+using Ngrok.Managing.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -69,8 +70,9 @@ namespace Ngrok.Managing.Forwarding
 
         private void BackgroundWork()
         {
-            var activeTunnels = _manager.GetTunnels();
+            TunnelListEntity activeTunnels = _manager.GetTunnels();
 
+            
 
         }
 

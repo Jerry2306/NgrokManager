@@ -48,44 +48,102 @@ namespace NgrokManager.ViewModel
 
             _manager = new NgrokServerManager();
             _ngrokBatchPath = ConfigurationManager.AppSettings["HostNgrokBatchPath"];
-            _manager.StartAPI(_ngrokBatchPath);
+            StartAPI();
         }
 
-        public void StartAPI() => _manager.StartAPI(_ngrokBatchPath);
+        public void StartAPI()
+        {
+            Log("Starting API...");
+            _manager.StartAPI(_ngrokBatchPath);
+            Log("API started!");
+        }
 
-        public void StopAPI() => _manager.StopAPI();
+        public void StopAPI()
+        {
+            Log("Stopping API...");
+            _manager.StopAPI();
+            Log("API stopped!");
+        }
 
         public void StartStop()
         {
             if (MainButtonContent.ToLower() == "start")
             {
-                _tunnel = _manager.StartTunneling(Const.McServerForward, "tcp", "25565");
+                try
+                {
+                    _tunnel = _manager.StartTunneling(Const.McServerForward, "tcp", "25565");
+                }
+                catch (Exception exc)
+                {
+                    throw new Exception($"Tunnel-Fehler: {exc.Message}", exc);
+                }
+
                 MainButtonContent = "Stop";
-                MessageBox.Show("Tunnel geöffnet! Datenbankeintrag wird angepasst...");
-                _helper.SetForwardAddress(Const.McServerForward, _tunnel.public_url);
-                MessageBox.Show("In Datenbank aktualisiert!");
+
+                try
+                {
+                    _helper.SetForwardAddress(Const.McServerForward, _tunnel.public_url);
+                }
+                catch (Exception exc)
+                {
+                    throw new Exception($"Datenbank-Fehler: {exc.Message}", exc);
+                }
+
+                Log("Tunnel geöffnet und Datenbankeintrag angepasst!");
             }
             else if (MainButtonContent.ToLower() == "stop")
             {
-                _manager.StopTunneling(Const.McServerForward);
+                try
+                {
+                    _manager.StopTunneling(Const.McServerForward);
+                }
+                catch (Exception exc)
+                {
+                    throw new Exception($"Tunnel-Fehler: {exc.Message}", exc);
+                }
+
                 _tunnel = null;
                 MainButtonContent = "Start";
-                MessageBox.Show("Tunnel geschlossen! Datenbankeintrag wird angepasst...");
-                _helper.SetForwardAddress(Const.McServerForward, string.Empty);
-                MessageBox.Show("In Datenbank aktualisiert!");
+
+                try
+                {
+                    _helper.SetForwardAddress(Const.McServerForward, string.Empty);
+                }
+                catch (Exception exc)
+                {
+                    throw new Exception($"Datenbank-Fehler: {exc.Message}", exc);
+                }
+
+                Log("Tunnel geschlossen und Datenbankeintrag angepasst!");
             }
         }
 
         public void RefreshAddress()
         {
-            if (_tunnel != null)
-                _manager.StopTunneling(Const.McServerForward);
+            try
+            {
+                if (_tunnel != null)
+                    _manager.StopTunneling(Const.McServerForward);
 
-            _tunnel = _manager.StartTunneling(Const.McServerForward, "tcp", "25565");
-            MessageBox.Show("Adresse erneuert! Datenbankeintrag wird angepasst...");
+                _tunnel = _manager.StartTunneling(Const.McServerForward, "tcp", "25565");
+            }
+            catch (Exception exc)
+            {
+                throw new Exception($"Tunnel-Fehler: {exc.Message}", exc);
+            }
 
-            _helper.SetForwardAddress(Const.McServerForward, _tunnel.public_url);
-            MessageBox.Show("In Datenbank aktualisiert!");
+            try
+            {
+                _helper.SetForwardAddress(Const.McServerForward, _tunnel.public_url);
+            }
+            catch (Exception exc)
+            {
+                throw new Exception($"Datenbank-Fehler: {exc.Message}", exc);
+            }
+
+            Log("Tunnel erneuert und Datenbankeintrag angepasst!");
         }
+
+        private void Log(string msg) => BackgroundWorkerLog.Add(msg);
     }
 }

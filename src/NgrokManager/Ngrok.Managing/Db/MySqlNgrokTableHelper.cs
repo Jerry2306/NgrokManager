@@ -37,5 +37,13 @@ namespace Ngrok.Managing.Db
             var entity = new ForwardTableEntity(queryResult[0].ToString(), queryResult[1].ToString(), DateTime.Parse(queryResult[2].ToString()));
             return entity;
         }
+
+        public IEnumerable<ForwardTableEntity> GetForwardEntities()
+        {
+            var queryResult = _manager.RunQuery($"SELECT ConnectionName,ConnectionAddress,ConnectionDate FROM ngrok", 3);
+
+            foreach (var item in queryResult)
+                yield return new ForwardTableEntity(queryResult[0].ToString(), queryResult[1].ToString(), DateTime.Parse(queryResult[2].ToString()));
+        }
     }
 }
